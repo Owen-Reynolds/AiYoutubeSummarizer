@@ -1,5 +1,5 @@
 import streamlit as st
-from summarizer import summarizeStream, getTranscript
+from backend.summarizer import summarizeStream, getTranscript
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
