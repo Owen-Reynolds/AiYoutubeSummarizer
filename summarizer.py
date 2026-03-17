@@ -40,34 +40,29 @@ def getTranscript(url : str) -> str:
         return " ".join(texts)
 
 
-def summarize(url : str ) -> dict:
-        transcript = getTranscript(url)
+def summarizeStream(url: str):
+    transcript = getTranscript(url)[:12000]
 
-        transcript = transcript[:12000]
+    prompt = f"""You are an expert at summarizing Youtube videos.
+    Given this transcript, respond in this exact format:
 
-        prompt = f"""You are an expert at summarizing Youtube videos.
-        Given this transcript, respond in this exact format:
+    Summary:
+    2-3 sentence plain-english summary.
 
-        Summary:
-        2-3 sentence plain-english summary.
+    Key Points:
+    - point one
+    - point two 
+    - point three
 
-        Key Points:
-        - point one
-        - point two 
-        - point three
+    Verdict:
+    One sentence on who should watch this.
+    
+    TRANSCRIPT:
+    {transcript}"""
 
-        Verdict:
-        One sentence on who should watch this.
-        
-        TRANSCRIPT:
-        {transcript}"""
+    yield from client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        stream=True
+    )
 
-        response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}]
-        )
-        return response.choices[0].message.content
-
-if __name__ == "__main__":
-    url = input("Enter a YouTube URL: ")
-    print(summarize(url))
