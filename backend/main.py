@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KET"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 app = FastAPI()
 
 app.add_middleware(
@@ -45,6 +45,6 @@ async def ask_question(req: questionRequest):
         )
         return { "answer": response.choices[0].message.content }
 
-app.get("/")
+@app.get("/")
 async def root():
         return { "status": "running" }
