@@ -34,3 +34,17 @@ async def summarize_video(req: summarizeRequest):
         except Exception as e:
                 return { "error": str(e)}, 400
         
+@app.post("/ask")
+async def ask_question(req: questionRequest):
+        response = client.chat.completions.create(
+                model = "gpt-4o-mini",
+                messages=[
+                        {"role": "system", "content": f"Answer based only on this transcript: {req.transcript[:8000]}"},
+                        {"role": "user", "content": req.question}
+                ]
+        )
+        return { "answer": response.choices[0].message.content }
+
+app.get("/")
+async def root():
+        return { "status": "running" }
