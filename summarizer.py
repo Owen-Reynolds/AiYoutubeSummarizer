@@ -6,16 +6,6 @@ import os, re
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
-#Test api
-def testCall():
-        response = client.chat.completions.create(
-                model = "gpt-4o-mini",
-                messages = [{"role": "user", "content": "Say hello!"}]
-        )
-
-        print(response.choices[0].message.content)
-
 #Get Youtube video IDs
 def getVideoID(url : str) -> str:
         patterns = [
@@ -39,11 +29,13 @@ def getTranscript(url : str) -> str:
 
         return " ".join(texts)
 
-
-def summarizeStream(url: str):
+def summarizeStream(url: str, tone: str = "Professional"):
     transcript = getTranscript(url)[:12000]
 
     prompt = f"""You are an expert at summarizing Youtube videos.
+    The user wants the summary to have a '{tone}' tone. 
+    Adjust your vocabulary, style, and attitude accordingly.
+
     Given this transcript, respond in this exact format:
 
     Summary:

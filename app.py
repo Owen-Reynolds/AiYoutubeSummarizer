@@ -18,7 +18,11 @@ def on_summarize():
 
     def run():
         try:
-            for chunk in summarizeStream(url):
+            # Get selected mood
+            selection = mood_listbox.curselection()
+            tone = mood_listbox.get(selection[0]) if selection else "Professional"
+            
+            for chunk in summarizeStream(url, tone):
                 token = getattr(chunk.choices[0].delta, "content", "") or ""
                 if token:
                     root.after(0, append_text, result_box, token)
@@ -44,7 +48,7 @@ def append_text(widget, text):
 
 root = tk.Tk()
 root.title("YT Summarizer")
-root.geometry("700x480")
+root.geometry("700x560")
 root.configure(bg="#1e1e2e")
 root.resizable(False, False)
 
@@ -75,6 +79,22 @@ summarize_btn = tk.Button(input_frame, text="Summarize", font=FONT_BOLD,
                           activeforeground=BTN_FG, relief=tk.FLAT, padx=18, pady=4,
                           cursor="hand2", command=on_summarize)
 summarize_btn.pack(side=tk.LEFT, padx=(10, 0))
+
+# Mood selection
+mood_frame = tk.Frame(root, bg=BG)
+mood_frame.pack(fill=tk.X, padx=20, pady=(0, 10))
+
+tk.Label(mood_frame, text="Select Mood:", font=("Segoe UI", 10, "bold"), bg=BG, fg="#a6adc8").pack(anchor=tk.W)
+
+mood_listbox = tk.Listbox(mood_frame, font=("Segoe UI", 10), bg=ENTRY_BG, fg=FG, 
+                          selectbackground=BTN_BG, selectforeground=BTN_FG, 
+                          height=4, relief=tk.FLAT, borderwidth=0, highlightthickness=0)
+mood_listbox.pack(fill=tk.X, pady=(4, 0))
+
+moods = ["Professional", "Funny", "Sarcastically Mean", "Informative", "Short & Concise"]
+for mood in moods:
+    mood_listbox.insert(tk.END, mood)
+mood_listbox.selection_set(0) # Default to Professional
 
 # Status label
 status_label = tk.Label(root, text="", font=("Segoe UI", 10), bg=BG, fg=FG)
